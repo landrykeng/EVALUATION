@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.express as px
 import plotly.graph_objects as go
-from my_fonction import *
+
 
 
 st.set_page_config(page_title="FORMULAIRE EVALUATION DES ENSEIGNANT", page_icon="📊", layout="wide")
@@ -24,6 +24,7 @@ st.markdown(
 
 data=pd.read_excel('Classification.xlsx')
 student_eval=pd.read_excel('Base.xlsx', sheet_name="Etudiant")
+data_eval=pd.read_excel('Base.xlsx', sheet_name="Evaluation")
 
 st.sidebar.header("Menu")
 
@@ -138,18 +139,13 @@ else:
                         responses[question_key] = response
                         if response == "":
                             missing_responses.append(
-                                f"Pour le cours de   {cours} dispensé par M. {enseignant}, vous n'avez pas donné de réponse à la question {question_dict[question_key]}."
+                                f"⚠️Pour le cours de   {cours} dispensé par M. {enseignant}, vous n'avez pas donné de réponse à la question {question_dict[question_key]}."
                             )
                     evaluation_data.append(responses)
 
             evaluation_df = pd.DataFrame(evaluation_data)
 
-            # Displaying the dataframes for verification
-            st.write("### Données de l'étudiant")
-            st.dataframe(etudiant_df)
 
-            st.write("### Données d'évaluation")
-            st.dataframe(evaluation_df)
 
             if len(missing_responses)==0:
             # Load the Excel file
@@ -160,8 +156,10 @@ else:
 
                     # Append evaluation data to the "Evaluation" sheet
                     evaluation_df.to_excel(writer, sheet_name="Evaluation", index=False, header=False, startrow=writer.sheets["Evaluation"].max_row)
-                st.success("Votre évaluation a été soumise avec succès.")
+                st.success("✅✅Votre évaluation a été soumise avec succès.")
+                student_eval=pd.read_excel('Base.xlsx', sheet_name="Etudiant")
+                data_eval=pd.read_excel('Base.xlsx', sheet_name="Evaluation")
             else:
-                st.error("La soumission du questionnaire ne sera valide que si toutes les réponses sont non vides.")
+                st.error("❌❌ Evaluation non valide pour la(es) raison(s) suivante(s):")
                 for message in missing_responses:
-                    st.markdown(message)
+                    st.info(message)

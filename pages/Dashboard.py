@@ -14,13 +14,20 @@ st.markdown(
     """
     <style>
     body {
-        font-size: 20px;
+        font-size: 15px;
     }
     </style>
     """,
     unsafe_allow_html=True
 )
 
+
+col=st.columns(2)
+
+with col[0]:
+    make_cross_hist_2(student_eval,var2="Classe", var1="Sexe", typ_bar=2, titre="Effectif des evaluations par classe")
+with col[1]:
+    pass #make_cross_hist_2(student_eval,var1="Sexe",var2="Classe", titre="Effectif des evaluations par classe")
+
 st.dataframe(student_eval, use_container_width=True)
 st.dataframe(data_eval, use_container_width=True)
-
