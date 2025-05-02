@@ -5,12 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.express as px
 import plotly.graph_objects as go
-from sklearn.metrics import confusion_matrix, classification_report, roc_curve, roc_auc_score
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import LogisticRegression
-from sklearn.svm import SVC
-from sklearn.tree import DecisionTreeClassifier
+from my_fonction import *
 
 
 st.set_page_config(page_title="FORMULAIRE EVALUATION DES ENSEIGNANT", page_icon="📊", layout="wide")
@@ -20,7 +15,9 @@ st.title("EVALUATION DES ENSEIGNENTS DE LA FORMATION CONTINUE, SEMESTRE 1")
 data=pd.read_excel('Classification.xlsx')
 student_eval=pd.read_excel('Base.xlsx', sheet_name="Etudiant")
 
-st.dataframe(student_eval)
+st.sidebar.header("Menu")
+
+#st.dataframe(student_eval)
 nested_dict = {}
 for _, row in data.iterrows():
     classe = row['Classe']
