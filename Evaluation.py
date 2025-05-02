@@ -7,7 +7,16 @@ import plotly.express as px
 import plotly.graph_objects as go
 from my_fonction import *
 
-
+st.markdown(
+    """
+    <style>
+    body {
+        font-size: 20px;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 st.set_page_config(page_title="FORMULAIRE EVALUATION DES ENSEIGNANT", page_icon="📊", layout="wide")
 st.title("EVALUATION DES ENSEIGNENTS DE LA FORMATION CONTINUE, SEMESTRE 1")
 
