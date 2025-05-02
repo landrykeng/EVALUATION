@@ -7,6 +7,10 @@ import plotly.express as px
 import plotly.graph_objects as go
 from my_fonction import *
 
+
+st.set_page_config(page_title="FORMULAIRE EVALUATION DES ENSEIGNANT", page_icon="📊", layout="wide")
+st.title("EVALUATION DES ENSEIGNENTS DE LA FORMATION CONTINUE, SEMESTRE 1")
+
 st.markdown(
     """
     <style>
@@ -17,9 +21,6 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-st.set_page_config(page_title="FORMULAIRE EVALUATION DES ENSEIGNANT", page_icon="📊", layout="wide")
-st.title("EVALUATION DES ENSEIGNENTS DE LA FORMATION CONTINUE, SEMESTRE 1")
-
 
 data=pd.read_excel('Classification.xlsx')
 student_eval=pd.read_excel('Base.xlsx', sheet_name="Etudiant")
