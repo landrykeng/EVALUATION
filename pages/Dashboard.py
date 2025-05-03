@@ -293,6 +293,7 @@ def make_heatmap_echart(data, title="", x_label_rotation=45, colors=None, height
     heatmap_data = [
         [j, i, data.iloc[i, j]] for i in range(len(y_labels)) for j in range(len(x_labels))
     ]
+    label_data = [data.iloc[i, j] for i in range(len(y_labels)) for j in range(len(x_labels))]
     
     # Create options for the heatmap
     options = {
@@ -318,7 +319,8 @@ def make_heatmap_echart(data, title="", x_label_rotation=45, colors=None, height
                 "type": "heatmap",
                 "data": heatmap_data,
                 "label": {"show": True,
-                          "formatter": "{c}%",
+                          "formatter": f"{label_data[c]}%",
+                          "color": "#fff",
                           "position": "inside"},
                 "emphasis": {"itemStyle": {"borderColor": "#333", "borderWidth": 1}},
             }
@@ -508,7 +510,7 @@ def make_donut_chart(data, title="", colors=None, height="400px", cle="donut"):
                     "legend": {
                         "orient": "horizontal",
                         "top": "top",
-                        "data": list(data_with_percentages.keys()),
+                        "data": list(data.keys()),
                     },
                     "series": [
                         {
