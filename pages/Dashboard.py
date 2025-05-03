@@ -506,6 +506,8 @@ def make_donut_chart(data, title="", colors=None, height="400px", cle="donut"):
                     "title": {"text": title, "left": "center"},
                     "tooltip": {"trigger": "item"},
                     "legend": {
+                        "orient": "vertical",
+                        "left": "left",
                         "data": list(data.keys()),
                     },
                     "series": [
