@@ -9,7 +9,39 @@ import plotly.graph_objects as go
 
 
 st.set_page_config(page_title="FORMULAIRE EVALUATION DES ENSEIGNANT", page_icon="📊", layout="wide")
-st.title("EVALUATION DES ENSEIGNENTS DE LA FORMATION CONTINUE, SEMESTRE 1")
+
+# Create a custom container with fancy styling for the title
+st.markdown("""
+    <div style='padding: 1.5rem; 
+                margin: 2rem 0; 
+                background: linear-gradient(135deg, #6e8efb, #4776E6);
+                border-radius: 15px;
+                box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+                animation: glow 2s ease-in-out infinite alternate;'>
+        <h1 style='color: white; 
+                   text-align: center; 
+                   font-size: 2.5rem; 
+                   font-weight: bold;
+                   text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+                   margin: 0;
+                   letter-spacing: 2px;'>
+            EVALUATION DES ENSEIGNENTS DE LA FORMATION CONTINUE
+        </h1>
+    </div>
+    <style>
+        @keyframes glow {
+            from {
+                box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            }
+            to {
+                box-shadow: 0 8px 24px rgba(78,137,247,0.4);
+            }
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+#st.title("EVALUATION DES ENSEIGNENTS DE LA FORMATION CONTINUE, SEMESTRE 1")
+
 
 st.markdown("""
     <style>
