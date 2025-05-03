@@ -562,7 +562,7 @@ with col[1]:
     for colone in tab_temp.columns:
         tab_temp[colone]=round(100*tab_temp[colone]/tab_temp[colone].sum(),2)
     
-    st.markdown("##### Natation Générale par classe")
+    st.markdown("##### Notation Générale par classe")
     make_cross_echart(tab_temp.T,  x_label_rotation=0,cle="compare")
 
 cl=st.columns(3)
@@ -670,13 +670,13 @@ with cb[0]:
     selected_class = st.multiselect("Sélectionner une classe pour filtrer les étudiants", student_eval["Classe"].unique(),default=student_eval["Classe"].unique())
     filtered_students = student_eval[student_eval["Classe"].isin(selected_class)]
     file_name = st.text_input("Nom du fichier à télécharger (sans extension)", value="student")
-    if st.button("Télécharger"):
+    if st.button("📥Télécharger"):
         output = io.BytesIO()
         with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
             filtered_students.to_excel(writer, index=False, sheet_name="Étudiants")
         output.seek(0)
         st.download_button(
-            label="Télécharger le fichier Excel",
+            label="📥Télécharger le fichier Excel",
             data=output,
             file_name=f"{file_name}.xlsx",
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -692,7 +692,7 @@ with cc[1]:
     selected_class = st.multiselect("Sélectionner une classe pour filtrer les évaluations", data_eval["Classe"].unique(), default=data_eval["Classe"].unique())
     filtered_evaluations = data_eval[data_eval["Classe"].isin(selected_class)]
     file_name = st.text_input("Nom du fichier (sans extension)", value="evaluation")
-    if st.button("Télécharger", key="hjblb"):
+    if st.button("📥Télécharger", key="hjblb"):
         output = io.BytesIO()
         labels = pd.DataFrame.from_dict(question_dict, orient="index", columns=["Question"])
         with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
@@ -700,7 +700,7 @@ with cc[1]:
             labels.to_excel(writer, index_label="Code", sheet_name="Labels")
         output.seek(0)
         st.download_button(
-            label="Télécharger le fichier Excel",
+            label="📥Télécharger le fichier Excel",
             data=output,
             file_name=f"{file_name}.xlsx",
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
