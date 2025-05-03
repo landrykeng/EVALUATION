@@ -142,6 +142,50 @@ def make_grouped_bar_chart(data, x_col, y_cols, title="", x_label_rotation=45, c
         # Render the chart
         st_echarts(options=options, height=height, key=cle)
 
+def make_donut_chart(data, title="", colors=None, height="400px", cle="donut"):
+                """
+                Generate a donut chart using st_echarts.
+
+                Parameters:
+                - data: dict, keys are labels and values are corresponding numerical values.
+                - title: str, the title of the chart.
+                - colors: list, list of colors for the segments.
+                - height: str, height of the chart.
+
+                Returns:
+                - None, renders the chart in Streamlit.
+                """
+                if colors is None:
+                    colors = ["#0DB329", "#E4E917", "#E79D19", "#E32B1D", "#0CA0B4", "#064C56"]
+
+                # Prepare data for the chart
+                series_data = [{"value": value, "name": key} for key, value in data.items()]
+
+                # Create options for the donut chart
+                options = {
+                    "title": {"text": title, "left": "center"},
+                    "tooltip": {"trigger": "item"},
+                    "legend": {"orient": "vertical", "left": "left", "data": list(data.keys())},
+                    "series": [
+                        {
+                            "name": "Evaluation",
+                            "type": "pie",
+                            "radius": ["40%", "70%"],
+                            "avoidLabelOverlap": False,
+                            "itemStyle": {"borderRadius": 10, "borderColor": "#fff", "borderWidth": 2},
+                            "label": {"show": True, "position": "outside"},
+                            "emphasis": {
+                                "label": {"show": True, "fontSize": "16", "fontWeight": "bold"}
+                            },
+                            "data": series_data,
+                        }
+                    ],
+                    "color": colors,
+                }
+
+                # Render the chart
+                st_echarts(options=options, height=height, key=cle)
+
 st.title("Tableau de bord pour le suivi des évaluations des enseignants")
 st.markdown(
     """
@@ -154,6 +198,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+st.dataframe(data_eval, use_container_width=True)
 
 col=st.columns(2)
 
@@ -166,7 +211,7 @@ with col[0]:
         x_col="Classe",
         y_cols=["Masculin", "Féminin"],
         title="",
-        x_label_rotation=45,
+        x_label_rotation=0,
         colors=["#5470C6", "#91CC75"],
         height="400px",
         cle="graph"
@@ -202,7 +247,7 @@ with col[1]:
     for colone in tab_temp.columns:
         tab_temp[colone]=round(100*tab_temp[colone]/tab_temp[colone].sum(),2)
     
-    make_cross_echart(tab_temp.T, colors=colors_palette, x_label_rotation=45,cle="compare")
+    make_cross_echart(tab_temp.T, colors=colors_palette, x_label_rotation=0,cle="compare")
 
 cl=st.columns(3)
 with cl[0]:
@@ -233,9 +278,30 @@ with cl[0]:
         tab_temp_2=cross_table_quest.T
         for colone in tab_temp_2.columns:
             tab_temp_2[colone]=round(100*tab_temp_2[colone]/tab_temp_2[colone].sum(),2)
-        make_cross_echart(tab_temp_2.T, colors=colors_palette, x_label_rotation=45,cle="juijb")
+        make_cross_echart(tab_temp_2.T, colors=colors_palette[4:], x_label_rotation=0,cle="juijb")
 
-
+with cl[1]:
+    selected_enseignant = st.selectbox("Choisir un enseignant", data_eval["Enseignant"].unique())
+    data_enseignant = data_eval[data_eval["Enseignant"] == selected_enseignant][["Classe", "Q_01", "Q_02", "Q_03", "Q_04", "Q_05", "Q_06", "Q_07", "Q_08", "Q_09", "Q_10", "Q_11", "Q_12", "Q_13", "Q_14", "Q_15", "Q_16", "Q_17","Q_18"]]
+    dict_reponse_enseignant = {}
+    for classe in data_enseignant["Classe"].unique():
+        data_classe_enseignant = data_enseignant[data_enseignant["Classe"] == classe].drop(columns=["Classe"])
+        response_counts_enseignant = data_classe_enseignant.apply(pd.Series.value_counts).fillna(0).sum(axis=1)
+        for rep in ["Très satisfait", "Satisfait", "Moyen", "Mauvais"]:
+            if rep not in response_counts_enseignant:
+                response_counts_enseignant[rep] = 0
+        dict_reponse_enseignant[classe] = response_counts_enseignant.loc[["Très satisfait", "Satisfait", "Moyen", "Mauvais"]].to_dict()
+    
+    if len(dict_reponse_enseignant.keys())==1:
+        cross_table_enseignant = pd.DataFrame(dict_reponse_enseignant)
+        make_donut_chart(dict_reponse_enseignant[classe])
+    else:
+        cross_table_enseignant = pd.DataFrame(dict_reponse_enseignant, index=list(response_counts_enseignant.keys()))
+        tab_temp_3=cross_table_enseignant
+        for colone in tab_temp_3.columns:
+            tab_temp_3[colone]=round(100*tab_temp_3[colone]/tab_temp_3[colone].sum(),2)
+        make_cross_echart(tab_temp_3.T, colors=colors_palette, x_label_rotation=40,cle="jui")
+        
 
 #st.dataframe(student_eval, use_container_width=True)
 #st.dataframe(data_eval, use_container_width=True)
