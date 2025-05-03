@@ -293,7 +293,7 @@ def make_heatmap_echart(data, title="", x_label_rotation=45, colors=None, height
     heatmap_data = [
         [j, i, data.iloc[i, j]] for i in range(len(y_labels)) for j in range(len(x_labels))
     ]
-    label_data = [data.iloc[i, j] for i in range(len(y_labels)) for j in range(len(x_labels))]
+    label_data = [[x[0],x[1],x[2]] for x in heatmap_data]
     
     # Create options for the heatmap
     options = {
@@ -315,13 +315,14 @@ def make_heatmap_echart(data, title="", x_label_rotation=45, colors=None, height
             "inRange": {"color": colors},
         },
         "series": [
-            {
+            {   "name": "Evaluation",
                 "type": "heatmap",
-                "data": heatmap_data,
-                "label": {"show": True,
-                          "formatter": f"{label_data[c]}%",
-                          "color": "#fff",
-                          "position": "inside"},
+                "data": label_data,
+                "label": {"show": True},
+                "itemStyle": {
+                    "borderColor": "#fff",
+                    "borderWidth": 1,
+                },
                 "emphasis": {"itemStyle": {"borderColor": "#333", "borderWidth": 1}},
             }
         ],
