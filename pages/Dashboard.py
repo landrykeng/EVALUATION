@@ -317,7 +317,9 @@ def make_heatmap_echart(data, title="", x_label_rotation=45, colors=None, height
             {
                 "type": "heatmap",
                 "data": heatmap_data,
-                "label": {"show": True},
+                "label": {"show": True,
+                          "formatter": "{c}%",
+                          "position": "inside"},
                 "emphasis": {"itemStyle": {"borderColor": "#333", "borderWidth": 1}},
             }
         ],
@@ -388,6 +390,7 @@ def make_cross_echart(cross_table, title="", x_label_rotation=45, colors=None, h
     ]
 
     # Create options for the e_chart
+    # Add label formatter to show percentages
     options = {
         "title": {"text": title},
         "tooltip": {"trigger": "axis"},
@@ -397,9 +400,21 @@ def make_cross_echart(cross_table, title="", x_label_rotation=45, colors=None, h
             "data": categories,
             "axisLabel": {"rotate": x_label_rotation},
         },
-        "yAxis": {"type": "value"},
-        "series": series_data,
+        "yAxis": {
+            "type": "value",
+            "axisLabel": {"formatter": "{value}%"}
+        },
+        "series": [{
+            **series,
+            "label": {
+                "show": True,
+                "formatter": "{c}%",
+                "position": "inside"
+            }
+        } for series in series_data]
     }
+    
+    
 
     # Render the chart
     st_echarts(options=options, height=height, key=cle)
@@ -476,19 +491,30 @@ def make_donut_chart(data, title="", colors=None, height="400px", cle="donut"):
 
                 # Prepare data for the chart
                 series_data = [{"value": value, "name": key} for key, value in data.items()]
-
+                # Add percentage data to the series_data
+                for item in series_data:
+                    item['value'] = round(item['value'] / sum(d['value'] for d in series_data) * 100, 2)
+                    item['name'] = f"{item['name']} ({item['value']}%)"
                 # Create options for the donut chart
+                # Update value percentages in data for the legend
+                data_with_percentages = {}
+                total = sum(data.values())
+                for key, value in data.items():
+                    percentage = round((value / total) * 100, 2)
+                    data_with_percentages[f"{key}"] = value
                 options = {
                     "title": {"text": title, "left": "center"},
                     "tooltip": {"trigger": "item"},
-                    "legend": {"orient": "vertical", "left": "left", "data": list(data.keys())},
+                    "legend": {
+                        "data": list(data.keys()),
+                    },
                     "series": [
                         {
                             "name": "Evaluation",
                             "type": "pie",
-                            "radius": ["40%", "70%"],
+                            "radius": ["30%", "70%"],
                             "avoidLabelOverlap": False,
-                            "itemStyle": {"borderRadius": 10, "borderColor": "#fff", "borderWidth": 2},
+                            "itemStyle": {"borderRadius": 3, "borderColor": "#fff", "borderWidth": 4},
                             "label": {"show": True, "position": "outside"},
                             "emphasis": {
                                 "label": {"show": True, "fontSize": "16", "fontWeight": "bold"}
