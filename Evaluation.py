@@ -174,12 +174,12 @@ classe_selectionnee = st.radio("Classe",[""] + list(nested_dict.keys()), index=0
 nom_etudiant = st.text_input("Nom")
 prenom_etudiant = st.text_input("Prénom")
 matricule = st.text_input("Matricule")
-#st.write(student_eval["Matricule"].value_counts())
-#st.write(list(student_eval["Matricule"]).count(matricule))
-
-sexe = st.radio("Sexe", ["","Masculin", "Féminin"], index=0)
-if str(matricule) in student_eval["Matricule"]:
-    st.error("Vous avez déjà fait votre évaluation")
+sexe = st.radio("Sexe", ["", "Masculin", "Féminin"], index=0)
+a=student_eval["Matricule"].tolist()
+if a.count(matricule) > 0:
+    st.info("⚠️Vous avez déjà fait votre évaluation pour ce semestre.")
+    st.info("⚠️ Rassurer vous que votre matricule est correct.")
+    st.stop()
 else:
     #enseignant_selectionne = st.selectbox("Sélectionnez un enseignant", list(nested_dict[classe_selectionnee].keys()))
     if classe_selectionnee!="" and nom_etudiant!="" and prenom_etudiant!="" and matricule !="" :
