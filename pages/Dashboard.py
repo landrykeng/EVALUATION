@@ -501,14 +501,14 @@ def make_donut_chart(data, title="", colors=None, height="400px", cle="donut"):
                 total = sum(data.values())
                 for key, value in data.items():
                     percentage = round((value / total) * 100, 2)
-                    data_with_percentages[f"{key}"] = value
+                    data_with_percentages[f"{key} ({percentage}%)"] = value
                 options = {
                     "title": {"text": title, "left": "center"},
                     "tooltip": {"trigger": "item"},
                     "legend": {
-                        "orient": "vertical",
-                        "left": "left",
-                        "data": list(data.keys()),
+                        "orient": "horizontal",
+                        "top": "top",
+                        "data": list(data_with_percentages.keys()),
                     },
                     "series": [
                         {
