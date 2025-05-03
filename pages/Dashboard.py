@@ -120,6 +120,153 @@ def authentication_system():
 
     return False
 
+st.markdown("""
+        <style>
+            /* Styling for tabs */
+            .stTabs [data-baseweb="tab-list"] {
+                gap: 20px;
+                background-color: #f8f9fa;
+                border-radius: 15px;
+                padding: 10px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            
+            .stTabs [data-baseweb="tab"] {
+                background-color: transparent;
+                border-radius: 10px;
+                padding: 10px 20px;
+                color: #495057;
+                font-weight: 600;
+                transition: all 0.3s ease;
+            }
+            
+            .stTabs [data-baseweb="tab"]:hover {
+                background-color: #e9ecef;
+                color: #0066cc;
+            }
+            
+            .stTabs [aria-selected="true"] {
+                background-color: #0066cc !important;
+                color: white !important;
+                border-radius: 10px;
+            }
+            
+            /* Content area styling */
+            .stTabs [data-baseweb="tab-panel"] {
+                background-color: white;
+                border-radius: 15px;
+                padding: 20px;
+                margin-top: 20px;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            }
+        </style>
+    """, unsafe_allow_html=True)
+
+st.markdown("""
+    <style>
+        .stMarkdown {font-family: 'Helvetica', sans-serif;}
+        .stButton button {
+            background-color: #0066cc;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            border: none;
+            transition: background-color 0.3s;
+        }
+        .stButton button:hover {
+            background-color: #0052a3;
+        }
+        .stRadio > label {
+            color: #2c3e50;
+            font-weight: 500;
+        }
+        .stExpander {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            margin: 10px 0;
+            border: 1px solid #dee2e6;
+        }
+        .stTextInput input {
+            border-radius: 5px;
+            border: 2px solid #e9ecef;
+        }
+        h1 {
+            color: #1e3d59;
+            text-align: center;
+            padding: 20px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        .stSidebar {
+            background-color: #f1f3f5;
+            padding: 20px;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+st.markdown("""
+    <style>
+        /* Card-like effect for expanders */
+        .stExpander {
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        .stExpander:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+        }
+        
+        /* Gradient background for header */
+        h1 {
+            background: linear-gradient(45deg, #1e3d59, #2c5282);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        /* Animated button hover effect */
+        .stButton button {
+            transition: all 0.3s ease;
+        }
+        .stButton button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        /* Radio button styling */
+        .stRadio > div {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+        .stRadio > div:hover {
+            background-color: #e9ecef;
+        }
+        
+        /* Text input focus effect */
+        .stTextInput input:focus {
+            border-color: #0066cc;
+            box-shadow: 0 0 0 2px rgba(0,102,204,0.2);
+        }
+        
+        /* Sidebar hover effect */
+        .stSidebar:hover {
+            box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+st.markdown(
+    """
+    <style>
+    body {
+        font-size: 20px;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+
 if not authentication_system():
     st.stop()
 
@@ -373,7 +520,7 @@ col=st.columns(2)
 with col[0]:
     # Prepare data for the chart
     class_sex_counts = student_eval.groupby(["Classe", "Sexe"]).size().unstack(fill_value=0)
-    # graphique de la répartition du nombre de personne ayant rempli par classe et par sexe
+    st.markdown("##### Repartition des etudaints ayant soumis leur évaluation")
     make_grouped_bar_chart(
         data=class_sex_counts.reset_index(),
         x_col="Classe",
@@ -415,7 +562,8 @@ with col[1]:
     for colone in tab_temp.columns:
         tab_temp[colone]=round(100*tab_temp[colone]/tab_temp[colone].sum(),2)
     
-    make_cross_echart(tab_temp.T, colors=colors_palette2, x_label_rotation=0,cle="compare")
+    st.markdown("##### Natation Générale par classe")
+    make_cross_echart(tab_temp.T,  x_label_rotation=0,cle="compare")
 
 cl=st.columns(3)
 with cl[0]:
@@ -446,6 +594,7 @@ with cl[0]:
         tab_temp_2=cross_table_quest.T
         for colone in tab_temp_2.columns:
             tab_temp_2[colone]=round(100*tab_temp_2[colone]/tab_temp_2[colone].sum(),2)
+        st.markdown(f" Evaluation Générale de {selected_question}")
         make_cross_echart(tab_temp_2.T, colors=colors_palette2[3:], x_label_rotation=0,cle="juijb")
 
 with cl[1]:
@@ -468,6 +617,7 @@ with cl[1]:
         tab_temp_3=cross_table_enseignant
         for colone in tab_temp_3.columns:
             tab_temp_3[colone]=round(100*tab_temp_3[colone]/tab_temp_3[colone].sum(),2)
+        st.markdown(f" Evaluation Générale de M. {selected_enseignant}")
         make_cross_echart(tab_temp_3.T, colors=colors_palette2[5:], x_label_rotation=40,cle="jui")
 
 with cl[2]:
@@ -485,12 +635,14 @@ with cl[2]:
         dict_reponse_cours[classe] = response_counts_cours.loc[["Très satisfait", "Satisfait", "Moyen", "Mauvais"]].to_dict()
     if len(dict_reponse_cours.keys())==1:
         cross_table_cours = pd.DataFrame(dict_reponse_cours)
+        st.markdown(f" Evaluation Générale de {new_class}")
         make_donut_chart(dict_reponse_cours[classe],cle="jbkjn")
     else:
         cross_table_cours = pd.DataFrame(dict_reponse_cours, index=list(response_counts_cours.keys()))
         tab_temp_4=cross_table_cours
         for colone in tab_temp_4.columns:
             tab_temp_4[colone]=round(100*tab_temp_4[colone]/tab_temp_4[colone].sum(),2)
+        st.markdown(f" Evaluation Générale de {new_class}")
         make_cross_echart(tab_temp_4.T, colors=colors_palette2[3:], x_label_rotation=40,cle="juij")
 
 ncl=st.columns(2)

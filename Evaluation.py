@@ -11,6 +11,98 @@ import plotly.graph_objects as go
 st.set_page_config(page_title="FORMULAIRE EVALUATION DES ENSEIGNANT", page_icon="📊", layout="wide")
 st.title("EVALUATION DES ENSEIGNENTS DE LA FORMATION CONTINUE, SEMESTRE 1")
 
+st.markdown("""
+    <style>
+        .stMarkdown {font-family: 'Helvetica', sans-serif;}
+        .stButton button {
+            background-color: #0066cc;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            border: none;
+            transition: background-color 0.3s;
+        }
+        .stButton button:hover {
+            background-color: #0052a3;
+        }
+        .stRadio > label {
+            color: #2c3e50;
+            font-weight: 500;
+        }
+        .stExpander {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            margin: 10px 0;
+            border: 1px solid #dee2e6;
+        }
+        .stTextInput input {
+            border-radius: 5px;
+            border: 2px solid #e9ecef;
+        }
+        h1 {
+            color: #1e3d59;
+            text-align: center;
+            padding: 20px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        .stSidebar {
+            background-color: #f1f3f5;
+            padding: 20px;
+        }
+    </style>
+""", unsafe_allow_html=True)
+st.markdown("""
+    <style>
+        /* Card-like effect for expanders */
+        .stExpander {
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        .stExpander:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+        }
+        
+        /* Gradient background for header */
+        h1 {
+            background: linear-gradient(45deg, #1e3d59, #2c5282);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        /* Animated button hover effect */
+        .stButton button {
+            transition: all 0.3s ease;
+        }
+        .stButton button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        /* Radio button styling */
+        .stRadio > div {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+        .stRadio > div:hover {
+            background-color: #e9ecef;
+        }
+        
+        /* Text input focus effect */
+        .stTextInput input:focus {
+            border-color: #0066cc;
+            box-shadow: 0 0 0 2px rgba(0,102,204,0.2);
+        }
+        
+        /* Sidebar hover effect */
+        .stSidebar:hover {
+            box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+        }
+    </style>
+""", unsafe_allow_html=True)
+
 st.markdown(
     """
     <style>
@@ -26,7 +118,6 @@ data=pd.read_excel('Classification.xlsx')
 student_eval=pd.read_excel('Base.xlsx', sheet_name="Etudiant")
 data_eval=pd.read_excel('Base.xlsx', sheet_name="Evaluation")
 
-st.sidebar.header("Menu")
 
 #st.dataframe(student_eval)
 nested_dict = {}
@@ -63,24 +154,24 @@ else:
         for enseignant, cours in nested_dict[classe_selectionnee].items():
             with st.expander(enseignant + ": " + cours, expanded=False):
                 st.write(f" Evaluation de M. {enseignant} pour le cours de {cours}")
-                Q_01=st.radio("GLOBALEMENT, ETES-VOUS SATISFAIT DE  ENSEIGNANT ?", ["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=1, key=classe_selectionnee+enseignant+cours+"_01")
-                Q_02=st.radio("ENONCE DES OBJECTIFS DU COURS", ["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=1,key=classe_selectionnee+enseignant+cours+"_02")
-                Q_03=st.radio("CONTENU DU COURS", ["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=1,key=classe_selectionnee+enseignant+cours+"_03")
-                Q_04=st.radio("TAUX DE COUVERTURE DU PROGRAMME", ["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=1,key=classe_selectionnee+enseignant+cours+"_04")
-                Q_05=st.radio("CONNAISSANCES THEORIQUES ACQUISES", ["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=1,key=classe_selectionnee+enseignant+cours+"_05")
-                Q_06=st.radio("CONNAISSANCES PRATIQUES", ["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=1,key=classe_selectionnee+enseignant+cours+"_06")
-                Q_07=st.radio("CONFORMITE DES EVALUATIONS AU CONTENU", ["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=1,key=classe_selectionnee+enseignant+cours+"_07")
-                Q_08=st.radio("RAPPORT DUREE/CONTENU DE L'EPREUVE", ["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=1,key=classe_selectionnee+enseignant+cours+"_08")
-                Q_09=st.radio("ASSIDUITE", ["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=1,key=classe_selectionnee+enseignant+cours+"_09")
-                Q_10=st.radio("PONCTUALITE", ["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=1,key=classe_selectionnee+enseignant+cours+"_10")
-                Q_11=st.radio("TENUE VESTIMENTAIRE", ["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=1,key=classe_selectionnee+enseignant+cours+"_11")
-                Q_12=st.radio("UTILISATION DES OUTILS ET MATERIELS DIDACTIQUES", ["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=1,key=classe_selectionnee+enseignant+cours+"_12")
-                Q_13=st.radio("DISPONIBILITE A ECOUTER LES ETUDIANTS", ["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=1,key=classe_selectionnee+enseignant+cours+"_13")
-                Q_14=st.radio("MAITRISE DE LA SALLE DE COURS", ["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=1,key=classe_selectionnee+enseignant+cours+"_14")
-                Q_15=st.radio("INTERACTION ENSEIGNANTS-ETUDIANTS (QUESTIONS-REPONSES)",["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=1,key=classe_selectionnee+enseignant+cours+"_15")
-                Q_16=st.radio("INTEGRATION DES TICS DANS LES COURS (VIDEO PROJECTEUR, INTERNET OU COURS SAISIS)",["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=1,key=classe_selectionnee+enseignant+cours+"_16")
-                Q_17=st.radio("ORGANISATION ET SUIVI DES TP, TPE ET TD",["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=1,key=classe_selectionnee+enseignant+cours+"_17")
-                Q_18=st.radio("CAPACITE DE TRANSMISSION DU COURS",["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=1,key=classe_selectionnee+enseignant+cours+"_18")
+                Q_01=st.radio("GLOBALEMENT, ETES-VOUS SATISFAIT DE  ENSEIGNANT ?", ["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=0, key=classe_selectionnee+enseignant+cours+"_01")
+                Q_02=st.radio("ENONCE DES OBJECTIFS DU COURS", ["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=0,key=classe_selectionnee+enseignant+cours+"_02")
+                Q_03=st.radio("CONTENU DU COURS", ["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=0,key=classe_selectionnee+enseignant+cours+"_03")
+                Q_04=st.radio("TAUX DE COUVERTURE DU PROGRAMME", ["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=0,key=classe_selectionnee+enseignant+cours+"_04")
+                Q_05=st.radio("CONNAISSANCES THEORIQUES ACQUISES", ["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=0,key=classe_selectionnee+enseignant+cours+"_05")
+                Q_06=st.radio("CONNAISSANCES PRATIQUES", ["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=0,key=classe_selectionnee+enseignant+cours+"_06")
+                Q_07=st.radio("CONFORMITE DES EVALUATIONS AU CONTENU", ["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=0,key=classe_selectionnee+enseignant+cours+"_07")
+                Q_08=st.radio("RAPPORT DUREE/CONTENU DE L'EPREUVE", ["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=0,key=classe_selectionnee+enseignant+cours+"_08")
+                Q_09=st.radio("ASSIDUITE", ["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=0,key=classe_selectionnee+enseignant+cours+"_09")
+                Q_10=st.radio("PONCTUALITE", ["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=0,key=classe_selectionnee+enseignant+cours+"_10")
+                Q_11=st.radio("TENUE VESTIMENTAIRE", ["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=0,key=classe_selectionnee+enseignant+cours+"_11")
+                Q_12=st.radio("UTILISATION DES OUTILS ET MATERIELS DIDACTIQUES", ["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=0,key=classe_selectionnee+enseignant+cours+"_12")
+                Q_13=st.radio("DISPONIBILITE A ECOUTER LES ETUDIANTS", ["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=0,key=classe_selectionnee+enseignant+cours+"_13")
+                Q_14=st.radio("MAITRISE DE LA SALLE DE COURS", ["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=0,key=classe_selectionnee+enseignant+cours+"_14")
+                Q_15=st.radio("INTERACTION ENSEIGNANTS-ETUDIANTS (QUESTIONS-REPONSES)",["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=0,key=classe_selectionnee+enseignant+cours+"_15")
+                Q_16=st.radio("INTEGRATION DES TICS DANS LES COURS (VIDEO PROJECTEUR, INTERNET OU COURS SAISIS)",["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=0,key=classe_selectionnee+enseignant+cours+"_16")
+                Q_17=st.radio("ORGANISATION ET SUIVI DES TP, TPE ET TD",["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=0,key=classe_selectionnee+enseignant+cours+"_17")
+                Q_18=st.radio("CAPACITE DE TRANSMISSION DU COURS",["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=0,key=classe_selectionnee+enseignant+cours+"_18")
                 Q_19=st.text_area("COMMENTEZ LES ASPECTS POSITIFS", height=100,key=classe_selectionnee+enseignant+cours+"_19")
                 Q_20=st.text_area("COMMENTEZ LES ASPECTS NEGATIFS", height=100,key=classe_selectionnee+enseignant+cours+"_20")
                 Q_21=st.text_area("SUGGESTIONS", height=100,key=classe_selectionnee+enseignant+cours+"_21")
