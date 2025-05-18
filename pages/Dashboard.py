@@ -6,7 +6,7 @@ import seaborn as sns
 import plotly.express as px
 import plotly.graph_objects as go
 from my_fonction import *
-
+from Fonction import *
 from streamlit_echarts import st_echarts
 from Evaluation import  data_eval, student_eval
 import io
@@ -14,111 +14,6 @@ import hashlib
 import json
 import os
 from datetime import datetime, timedelta
-
-def hash_password(password):
-    """Hash un mot de passe pour un stockage sécurisé"""
-    return hashlib.sha256(password.encode()).hexdigest()
-
-def load_users():
-    """Charge la base de données des utilisateurs depuis un fichier JSON"""
-    default_user = {
-        "users": {
-            "Evaluation FC2025": {
-                "password": hash_password("Dr GONDZE"),
-                "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            }
-        }
-    }
-    
-    if os.path.exists("users.json"):
-        with open("users.json", "r") as f:
-            return json.load(f)
-    
-    with open("users.json", "w") as f:
-        json.dump(default_user, f, indent=4)
-    return default_user
-
-def save_users(users):
-    """Sauvegarde la base de données des utilisateurs dans un fichier JSON"""
-    with open("users.json", "w") as f:
-        json.dump(users, f, indent=4)
-
-def check_credentials(username, password):
-    """Vérifie si les identifiants sont corrects"""
-    users = load_users()
-    if username in users["users"]:
-        if users["users"][username]["password"] == hash_password(password):
-            return True
-    return False
-
-def change_password(username, old_password, new_password):
-    """Change le mot de passe d'un utilisateur"""
-    users = load_users()
-    if username in users["users"]:
-        if users["users"][username]["password"] == hash_password(old_password):
-            users["users"][username]["password"] = hash_password(new_password)
-            save_users(users)
-            return True, "Mot de passe changé avec succès"
-    return False, "Ancien mot de passe incorrect"
-
-def authentication_system():
-    """Système d'authentification pour le dashboard"""
-    if "authenticated" not in st.session_state:
-        st.session_state["authenticated"] = False
-    if "username" not in st.session_state:
-        st.session_state["username"] = None
-    if "login_time" not in st.session_state:
-        st.session_state["login_time"] = None
-
-    if st.session_state["authenticated"]:
-        if st.session_state["login_time"] and datetime.now() - st.session_state["login_time"] > timedelta(hours=8):
-            st.session_state["authenticated"] = False
-            st.session_state["username"] = None
-            st.session_state["login_time"] = None
-            st.warning("Votre session a expiré. Veuillez vous reconnecter.")
-        else:
-            st.sidebar.success(f"Connecté en tant que {st.session_state['username']}")
-            if st.sidebar.button("Déconnexion"):
-                st.session_state["authenticated"] = False
-                st.session_state["username"] = None
-                st.session_state["login_time"] = None
-                st.rerun()
-            return True
-
-    tab1, tab2 = st.tabs(["Connexion", "Changer le mot de passe"])
-
-    with tab1:
-        username = st.text_input("Nom d'utilisateur", key="login_username")
-        password = st.text_input("Mot de passe", type="password", key="login_password")
-        
-        if st.button("Se connecter"):
-            if check_credentials(username, password):
-                st.session_state["authenticated"] = True
-                st.session_state["username"] = username
-                st.session_state["login_time"] = datetime.now()
-                st.success("Connexion réussie!")
-                st.rerun()
-            else:
-                st.error("Nom d'utilisateur ou mot de passe incorrect")
-
-    with tab2:
-        st.header("Changer le mot de passe")
-        username = st.text_input("Nom d'utilisateur", key="change_username")
-        old_password = st.text_input("Ancien mot de passe", type="password", key="old_password")
-        new_password = st.text_input("Nouveau mot de passe", type="password", key="new_password")
-        confirm_password = st.text_input("Confirmer le nouveau mot de passe", type="password", key="confirm_password")
-        
-        if st.button("Changer le mot de passe"):
-            if new_password != confirm_password:
-                st.error("Les mots de passe ne correspondent pas")
-            else:
-                success, message = change_password(username, old_password, new_password)
-                if success:
-                    st.success(message)
-                else:
-                    st.error(message)
-
-    return False
 
 st.markdown("""
         <style>
@@ -270,67 +165,6 @@ st.markdown(
 if not authentication_system():
     st.stop()
 
-def make_heatmap_echart(data, title="", x_label_rotation=45, colors=None, height="400px", cle="heatmap"):
-    """
-    Generate a heatmap using st_echarts.
-
-    Parameters:
-    - data: pd.DataFrame, the data to plot (rows as y-axis, columns as x-axis).
-    - title: str, the title of the chart.
-    - x_label_rotation: int, rotation angle for x-axis labels.
-    - colors: list, list of colors for the heatmap gradient.
-    - height: str, height of the chart.
-
-    Returns:
-    - None, renders the heatmap in Streamlit.
-    """
-    if colors is None:
-        colors = ["#B9B9FF", "#6D6DFF", "#0505FF","#00009A", "#000050", "#00000C"]  # Default gradient colors
-
-    # Prepare data for the heatmap
-    x_labels = data.columns.tolist()
-    y_labels = data.index.tolist()
-    heatmap_data = [
-        [j, i, data.iloc[i, j]] for i in range(len(y_labels)) for j in range(len(x_labels))
-    ]
-    label_data = [[x[0],x[1],x[2]] for x in heatmap_data]
-    
-    # Create options for the heatmap
-    options = {
-        "title": {"text": title, "left": "center"},
-        "tooltip": {"position": "top"},
-        "xAxis": {
-            "type": "category",
-            "data": x_labels,
-            "axisLabel": {"rotate": x_label_rotation},
-        },
-        "yAxis": {"type": "category", "data": y_labels},
-        "visualMap": {
-            "min": data.min().min(),
-            "max": data.max().max(),
-            "calculable": True,
-            "orient": "vertical",
-            "right": "5%",
-            "top": "middle",
-            "inRange": {"color": colors},
-        },
-        "series": [
-            {   "name": "Evaluation",
-                "type": "heatmap",
-                "data": label_data,
-                "label": {"show": True},
-                "itemStyle": {
-                    "borderColor": "#fff",
-                    "borderWidth": 1,
-                },
-                "emphasis": {"itemStyle": {"borderColor": "#333", "borderWidth": 1}},
-            }
-        ],
-    }
-
-    # Render the heatmap
-    st_echarts(options=options, height=height, key=cle)
-
 question_dict={
             "Q_01":"GLOBALEMENT, ETES-VOUS SATISFAIT DE  ENSEIGNANT ?",
             "Q_02":"ENONCE DES OBJECTIFS DU COURS",
@@ -360,180 +194,14 @@ reversed_question_dict = {value: key for key, value in question_dict.items()}
 colors_palette = ["#81DBF7", "#0FAADB", "#0B7A9D", "#06465A", "#4CF2BF", "#0EC48C","#09855F","#064E38","#F77DF1","#F127E7","#9E0A97","#660661"]
 colors_palette2 = ["#FC1414", "#F61AEC", "#7F09E1", "#074BE3", "#05B0E5", "#06E49F","#08E212","#BEE208","#E47A06","#E13709","#9E0A97","#660661"]
 
-def make_cross_echart(cross_table, title="", x_label_rotation=45, colors=None, height="400px",cle="b"):
-    """
-    Generate a grouped bar chart using st_echarts from a cross table.
-
-    Parameters:
-    - cross_table: pd.DataFrame, a cross table where rows are categories and columns are series.
-    - title: str, the title of the chart.
-    - x_label_rotation: int, rotation angle for x-axis labels.
-    - colors: list, list of colors for the series.
-    - height: str, height of the chart.
-
-    Returns:
-    - None, renders the chart in Streamlit.
-    """
-    if colors is None:
-        # Default colors if not provided
-        colors = ["#0DB329", "#E4E917", "#E79D19", "#E32B1D", "#0CA0B4", "#064C56"]
-        
-
-    # Prepare data for the chart
-    categories = cross_table.index.tolist()
-    series_data = [
-        {
-            "name": col,
-            "data": cross_table[col].tolist(),
-            "type": "bar",
-            "stack": "total",
-            "itemStyle": {"color": colors[i % len(colors)]},
-        }
-        for i, col in enumerate(cross_table.columns)
-    ]
-
-    # Create options for the e_chart
-    # Add label formatter to show percentages
-    options = {
-        "title": {"text": title},
-        "tooltip": {"trigger": "axis"},
-        "legend": {"data": cross_table.columns.tolist()},
-        "xAxis": {
-            "type": "category",
-            "data": categories,
-            "axisLabel": {"rotate": x_label_rotation},
-        },
-        "yAxis": {
-            "type": "value",
-            "axisLabel": {"formatter": "{value}%"}
-        },
-        "series": [{
-            **series,
-            "label": {
-                "show": True,
-                "formatter": "{c}%",
-                "position": "inside"
-            }
-        } for series in series_data]
-    }
+head=st.columns([4,30,4])
+with head[0]:
+    st.image("logo.png", width=150)
+with head[1]:
+    st.title("Tableau de bord pour le suivi des évaluations des enseignants")
+with head[2]:
+    st.image("logo.png", width=150)
     
-    
-
-    # Render the chart
-    st_echarts(options=options, height=height, key=cle)
-
-
-def make_grouped_bar_chart(data, x_col, y_cols, title="", x_label_rotation=45, colors=None, height="400px",cle="a"):
-        """
-        Generate a grouped bar chart using st_echarts.
-
-        Parameters:
-        - data: pd.DataFrame, the data to plot.
-        - x_col: str, the column to use for the x-axis.
-        - y_cols: list, the columns to use for the y-axis (grouped bars).
-        - title: str, the title of the chart.
-        - x_label_rotation: int, rotation angle for x-axis labels.
-        - colors: list, list of colors for the bars.
-        - height: str, height of the chart.
-
-        Returns:
-        - None, renders the chart in Streamlit.
-        """
-        if colors is None:
-            # Default colors if not provided
-            colors = ["#5470C6", "#91CC75", "#FAC858", "#EE6666", "#73C0DE"]
-
-        # Prepare data for the chart
-        categories = data[x_col].tolist()
-        series_data = [
-            {
-                "name": col,
-                "data": data[col].tolist(),
-                "type": "bar",
-                "itemStyle": {"color": colors[i % len(colors)]},
-                "label": {
-                    "show": True,
-                    "position": "top",
-                },
-            }
-            for i, col in enumerate(y_cols)
-        ]
-
-        # Create options for the e_chart
-        options = {
-            "title": {"text": title},
-            "tooltip": {"trigger": "axis"},
-            "legend": {"data": y_cols},
-            "xAxis": {
-                "type": "category",
-                "data": categories,
-                "axisLabel": {"rotate": x_label_rotation},
-            },
-            "yAxis": {"type": "value"},
-            "series": series_data,
-        }
-
-        # Render the chart
-        st_echarts(options=options, height=height, key=cle)
-
-def make_donut_chart(data, title="", colors=None, height="400px", cle="donut"):
-                """
-                Generate a donut chart using st_echarts.
-
-                Parameters:
-                - data: dict, keys are labels and values are corresponding numerical values.
-                - title: str, the title of the chart.
-                - colors: list, list of colors for the segments.
-                - height: str, height of the chart.
-
-                Returns:
-                - None, renders the chart in Streamlit.
-                """
-                if colors is None:
-                    colors = ["#0DB329", "#E4E917", "#E79D19", "#E32B1D", "#0CA0B4", "#064C56"]
-
-                # Prepare data for the chart
-                series_data = [{"value": value, "name": key} for key, value in data.items()]
-                # Add percentage data to the series_data
-                for item in series_data:
-                    item['value'] = round(item['value'] / sum(d['value'] for d in series_data) * 100, 2)
-                    item['name'] = f"{item['name']} ({item['value']}%)"
-                # Create options for the donut chart
-                # Update value percentages in data for the legend
-                data_with_percentages = {}
-                total = sum(data.values())
-                for key, value in data.items():
-                    percentage = round((value / total) * 100, 2)
-                    data_with_percentages[f"{key} ({percentage}%)"] = value
-                options = {
-                    "title": {"text": title, "left": "center"},
-                    "tooltip": {"trigger": "item"},
-                    "legend": {
-                        "orient": "horizontal",
-                        "top": "top",
-                        "data": list(data.keys()),
-                    },
-                    "series": [
-                        {
-                            "name": "Evaluation",
-                            "type": "pie",
-                            "radius": ["30%", "70%"],
-                            "avoidLabelOverlap": False,
-                            "itemStyle": {"borderRadius": 3, "borderColor": "#fff", "borderWidth": 4},
-                            "label": {"show": True, "position": "outside"},
-                            "emphasis": {
-                                "label": {"show": True, "fontSize": "16", "fontWeight": "bold"}
-                            },
-                            "data": series_data,
-                        }
-                    ],
-                    "color": colors,
-                }
-
-                # Render the chart
-                st_echarts(options=options, height=height, key=cle)
-
-st.title("Tableau de bord pour le suivi des évaluations des enseignants")
 st.markdown(
     """
     <style>
@@ -546,8 +214,34 @@ st.markdown(
 )
 
 
-col=st.columns(2)
+etudiant=pd.read_excel("Base.xlsx", sheet_name="Liste")
+base=pd.read_excel("Base.xlsx", sheet_name="Etudiant")
+evaluation=pd.read_excel("Base.xlsx", sheet_name="Evaluation")
 
+rep_etudiant=pd.DataFrame(etudiant["Classe"].value_counts())
+
+progress_LGTSD=base["Classe"].value_counts()["LGTSD"]/etudiant["Classe"].value_counts()["LGTSD"] if "LGTSD" in list(base["Classe"]) else 0
+progress_MDSMS=base["Classe"].value_counts()["MDSMS"]/etudiant["Classe"].value_counts()["MDSMS"] if "MDSMS" in list(base["Classe"]) else 0
+progress_L2BD=base["Classe"].value_counts()["L2BD"]/etudiant["Classe"].value_counts()["L2BD"] if "L2BD" in list(base["Classe"]) else 0
+progress_M2SA=base["Classe"].value_counts()["M2SA"]/etudiant["Classe"].value_counts()["M2SA"] if "MSA" in list(base["Classe"]) else 0
+progress_MAP=base["Classe"].value_counts()["MAP"]/etudiant["Classe"].value_counts()["MAP"] if "MAP" in list(base["Classe"]) else 0
+
+all=[progress_LGTSD,progress_MDSMS,progress_L2BD,progress_M2SA,progress_MAP]
+global_progress=np.mean(all)
+
+
+
+progrss=st.columns(2)
+with progrss[0]:
+    make_progress_char(global_progress,couleur="#BB4415",titre="Progression globale de l'évaluation")
+
+with progrss[1]:
+    make_multi_progress_bar(["LGTSD","MDSMS","L2BD","M2SA","MAP"],all,titre="Progression par classe",colors=["#0F7024","#0C1A94","#066D28","#076D6D","#460E7A"])
+
+if evaluation.shape[0] == 0:
+    st.markdown("### Aucune évaluation n'a été soumise par les étudiants pour le moment.")
+    st.stop()
+col=st.columns(2)
 with col[0]:
     # Prepare data for the chart
     class_sex_counts = student_eval.groupby(["Classe", "Sexe"]).size().unstack(fill_value=0)
@@ -566,10 +260,7 @@ with col[0]:
 
     
 with col[1]:
-    pass #make_cross_hist_2(student_eval,var1="Sexe",var2="Classe", titre="Effectif des evaluations par classe")
-    # Dropdown to select the class
     
-
     data_reponse=data_eval[["Classe","Q_01","Q_02","Q_03","Q_04","Q_05","Q_06","Q_07","Q_08","Q_09","Q_10","Q_11","Q_12","Q_13","Q_14","Q_15","Q_16","Q_17","Q_18"]]
     dict_reponse = {}
     for classe in data_reponse["Classe"].unique():
@@ -627,6 +318,9 @@ with cl[0]:
             tab_temp_2[colone]=round(100*tab_temp_2[colone]/tab_temp_2[colone].sum(),2)
         st.markdown(f" Evaluation Générale de {selected_question}")
         make_cross_echart(tab_temp_2.T, colors=colors_palette2[3:], x_label_rotation=0,cle="juijb")
+    else:
+        data_quest_word = data_eval[["Classe", reversed_question_dict[selected_question]]]
+        generate_word_cloud(data_quest_word, reversed_question_dict[selected_question])
 
 with cl[1]:
     selected_enseignant = st.selectbox("Choisir un enseignant", data_eval["Enseignant"].unique())

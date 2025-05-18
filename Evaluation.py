@@ -11,7 +11,11 @@ import plotly.graph_objects as go
 st.set_page_config(page_title="FORMULAIRE EVALUATION DES ENSEIGNANT", page_icon="📊", layout="wide")
 
 # Create a custom container with fancy styling for the title
-st.markdown("""
+head=st.columns([4,30,4])
+with head[0]:
+    st.image("logo.png", width=150)
+with head[1]: 
+    st.markdown("""
     <div style='padding: 1.5rem; 
                 margin: 2rem 0; 
                 background: linear-gradient(135deg, #6e8efb, #4776E6);
@@ -39,6 +43,8 @@ st.markdown("""
         }
     </style>
 """, unsafe_allow_html=True)
+with head[2]:
+    st.image("logo.png", width=150)
 
 #st.title("EVALUATION DES ENSEIGNENTS DE LA FORMATION CONTINUE, SEMESTRE 1")
 
@@ -83,6 +89,7 @@ st.markdown("""
         }
     </style>
 """, unsafe_allow_html=True)
+
 st.markdown("""
     <style>
         /* Card-like effect for expanders */
@@ -146,10 +153,12 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-data=pd.read_excel('Classification.xlsx')
+liste_etudiant=pd.read_excel('Base.xlsx', sheet_name="Liste")
+data=pd.read_excel('Base.xlsx', sheet_name="Classification")
 student_eval=pd.read_excel('Base.xlsx', sheet_name="Etudiant")
 data_eval=pd.read_excel('Base.xlsx', sheet_name="Evaluation")
 
+dico_etudiant=liste_etudiant.set_index('Matricule').T.to_dict('list')
 
 #st.dataframe(student_eval)
 nested_dict = {}
@@ -171,18 +180,23 @@ st.write("## Formulaire d'évaluation des enseignants")
 # Sélection de la classe
 
 classe_selectionnee = st.radio("Classe",[""] + list(nested_dict.keys()), index=0)
-nom_etudiant = st.text_input("Nom")
-prenom_etudiant = st.text_input("Prénom")
 matricule = st.text_input("Matricule")
+if  matricule!="":
+    pre_nom=dico_etudiant[int(matricule)][0] if int(matricule) in dico_etudiant  else ""
+else:
+    pre_nom=""
+#st.write(pre_nom)
+nom_etudiant = st.text_input("Nom", value=pre_nom)
+prenom_etudiant = st.text_input("Prénom")
 sexe = st.radio("Sexe", ["", "Masculin", "Féminin"], index=0)
 a=student_eval["Matricule"].tolist()
-if a.count(matricule) > 0:
-    st.info("⚠️Vous avez déjà fait votre évaluation pour ce semestre.")
-    st.info("⚠️ Rassurer vous que votre matricule est correct.")
+if matricule!= "" and a.count(int(matricule)) > 0:
+    st.info(f"⚠️ Merci {pre_nom}, mais vous avez déjà fait votre évaluation pour ce semestre.")
+    st.info("⚠️ Si ce n'est pas vous, rassurez-vous que votre matricule est correct.")
     st.stop()
 else:
     #enseignant_selectionne = st.selectbox("Sélectionnez un enseignant", list(nested_dict[classe_selectionnee].keys()))
-    if classe_selectionnee!="" and nom_etudiant!="" and prenom_etudiant!="" and matricule !="" :
+    if classe_selectionnee!="" and nom_etudiant!="" and matricule !="" and sexe!="" :
         for enseignant, cours in nested_dict[classe_selectionnee].items():
             with st.expander(enseignant + ": " + cours, expanded=False):
                 st.write(f" Evaluation de M. {enseignant} pour le cours de {cours}")
@@ -200,7 +214,7 @@ else:
                 Q_12=st.radio("UTILISATION DES OUTILS ET MATERIELS DIDACTIQUES", ["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=0,key=classe_selectionnee+enseignant+cours+"_12")
                 Q_13=st.radio("DISPONIBILITE A ECOUTER LES ETUDIANTS", ["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=0,key=classe_selectionnee+enseignant+cours+"_13")
                 Q_14=st.radio("MAITRISE DE LA SALLE DE COURS", ["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=0,key=classe_selectionnee+enseignant+cours+"_14")
-                Q_15=st.radio("INTERACTION ENSEIGNANTS-ETUDIANTS (QUESTIONS-REPONSES)",["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=0,key=classe_selectionnee+enseignant+cours+"_15")
+                Q_15=st.radio("INTERACTION ENSEIGNANTS-ETUDIANTS (QUESTIONS-REPONSES)",["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=1,key=classe_selectionnee+enseignant+cours+"_15")
                 Q_16=st.radio("INTEGRATION DES TICS DANS LES COURS (VIDEO PROJECTEUR, INTERNET OU COURS SAISIS)",["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=0,key=classe_selectionnee+enseignant+cours+"_16")
                 Q_17=st.radio("ORGANISATION ET SUIVI DES TP, TPE ET TD",["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=0,key=classe_selectionnee+enseignant+cours+"_17")
                 Q_18=st.radio("CAPACITE DE TRANSMISSION DU COURS",["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=0,key=classe_selectionnee+enseignant+cours+"_18")
@@ -279,7 +293,7 @@ else:
 
                     # Append evaluation data to the "Evaluation" sheet
                     evaluation_df.to_excel(writer, sheet_name="Evaluation", index=False, header=False, startrow=writer.sheets["Evaluation"].max_row)
-                st.success("✅✅Votre évaluation a été soumise avec succès.")
+                st.success(f"✅✅Merci {pre_nom}, votre évaluation a été soumise avec succès.")
                 student_eval=pd.read_excel('Base.xlsx', sheet_name="Etudiant")
                 data_eval=pd.read_excel('Base.xlsx', sheet_name="Evaluation")
             else:
