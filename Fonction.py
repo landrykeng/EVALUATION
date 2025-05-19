@@ -11,7 +11,6 @@ from collections import Counter
 import jieba
 import random
 from streamlit_echarts import st_echarts
-from Evaluation import  data_eval, student_eval
 import io
 import hashlib
 import json
