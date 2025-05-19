@@ -196,11 +196,11 @@ colors_palette2 = ["#FC1414", "#F61AEC", "#7F09E1", "#074BE3", "#05B0E5", "#06E4
 
 head=st.columns([4,30,4])
 with head[0]:
-    st.image("logo.png", width=150)
+    st.image("Logo.png", width=150)
 with head[1]:
     st.title("Tableau de bord pour le suivi des évaluations des enseignants")
 with head[2]:
-    st.image("logo.png", width=150)
+    st.image("Logo.png", width=150)
     
 st.markdown(
     """

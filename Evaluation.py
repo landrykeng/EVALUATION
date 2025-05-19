@@ -13,7 +13,7 @@ st.set_page_config(page_title="FORMULAIRE EVALUATION DES ENSEIGNANT", page_icon=
 # Create a custom container with fancy styling for the title
 head=st.columns([4,30,4])
 with head[0]:
-    st.image("logo.png", width=150)
+    st.image("Logo.png", width=150)
 with head[1]: 
     st.markdown("""
     <div style='padding: 1.5rem; 
@@ -44,7 +44,7 @@ with head[1]:
     </style>
 """, unsafe_allow_html=True)
 with head[2]:
-    st.image("logo.png", width=150)
+    st.image("Logo.png", width=150)
 
 #st.title("EVALUATION DES ENSEIGNENTS DE LA FORMATION CONTINUE, SEMESTRE 1")
 
@@ -160,7 +160,6 @@ data_eval=pd.read_excel('Base.xlsx', sheet_name="Evaluation")
 
 dico_etudiant=liste_etudiant.set_index('Matricule').T.to_dict('list')
 
-#st.dataframe(student_eval)
 nested_dict = {}
 for _, row in data.iterrows():
     classe = row['Classe']
@@ -173,7 +172,6 @@ for _, row in data.iterrows():
     nested_dict[classe][enseignant] = cours
 
 
-#st.dataframe(data, use_container_width=True)
 
 st.write("## Formulaire d'évaluation des enseignants")
 
@@ -194,6 +192,8 @@ if matricule!= "" and a.count(int(matricule)) > 0:
     st.info(f"⚠️ Merci {pre_nom}, mais vous avez déjà fait votre évaluation pour ce semestre.")
     st.info("⚠️ Si ce n'est pas vous, rassurez-vous que votre matricule est correct.")
     st.stop()
+elif int(matricule) not in dico_etudiant:
+    st.info("⚠️ Votre matricule n'est pas valide. Veuillez vérifier sur la fiche de présence de votre classe.")
 else:
     #enseignant_selectionne = st.selectbox("Sélectionnez un enseignant", list(nested_dict[classe_selectionnee].keys()))
     if classe_selectionnee!="" and nom_etudiant!="" and matricule !="" and sexe!="" :
