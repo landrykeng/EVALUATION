@@ -246,7 +246,7 @@ with col[0]:
     # Prepare data for the chart
     class_sex_counts = student_eval.groupby(["Classe", "Sexe"]).size().unstack(fill_value=0)
     st.markdown("##### Repartition des etudaints ayant soumis leur évaluation")
-    """make_grouped_bar_chart(
+    make_grouped_bar_chart(
         data=class_sex_counts.reset_index(),
         x_col="Classe",
         y_cols=["Masculin", "Féminin"],
@@ -255,7 +255,7 @@ with col[0]:
         colors=["#5470C6", "#91CC75"],
         height="400px",
         cle="graph"
-    )"""
+    )
     
 
     
