@@ -192,7 +192,7 @@ if matricule!= "" and a.count(int(matricule)) > 0:
     st.info(f"⚠️ Merci {pre_nom}, mais vous avez déjà fait votre évaluation pour ce semestre.")
     st.info("⚠️ Si ce n'est pas vous, rassurez-vous que votre matricule est correct.")
     st.stop()
-elif int(matricule) not in dico_etudiant:
+elif matricule!= "" and int(matricule) not in dico_etudiant:
     st.info("⚠️ Votre matricule n'est pas valide. Veuillez vérifier sur la fiche de présence de votre classe.")
 else:
     #enseignant_selectionne = st.selectbox("Sélectionnez un enseignant", list(nested_dict[classe_selectionnee].keys()))
