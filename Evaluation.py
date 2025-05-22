@@ -158,8 +158,6 @@ data=pd.read_excel('Base.xlsx', sheet_name="Classification")
 student_eval=pd.read_excel('Base.xlsx', sheet_name="Etudiant")
 data_eval=pd.read_excel('Base.xlsx', sheet_name="Evaluation")
 
-student_eval
-data_eval
 dico_etudiant=liste_etudiant.set_index('Matricule').T.to_dict('list')
 
 nested_dict = {}
