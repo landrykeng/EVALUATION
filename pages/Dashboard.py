@@ -221,12 +221,14 @@ evaluation=pd.read_excel("Base.xlsx", sheet_name="Evaluation")
 rep_etudiant=pd.DataFrame(etudiant["Classe"].value_counts())
 
 progress_LGTSD=base["Classe"].value_counts()["LGTSD"]/etudiant["Classe"].value_counts()["LGTSD"] if "LGTSD" in list(base["Classe"]) else 0
-progress_MDSMS=base["Classe"].value_counts()["MDSMS"]/etudiant["Classe"].value_counts()["MDSMS"] if "MDSMS" in list(base["Classe"]) else 0
+progress_MDSMS1=base["Classe"].value_counts()["MDSMS1"]/etudiant["Classe"].value_counts()["MDSMS1"] if "MDSMS1" in list(base["Classe"]) else 0
 progress_L2BD=base["Classe"].value_counts()["L2BD"]/etudiant["Classe"].value_counts()["L2BD"] if "L2BD" in list(base["Classe"]) else 0
 progress_M2SA=base["Classe"].value_counts()["M2SA"]/etudiant["Classe"].value_counts()["M2SA"] if "MSA" in list(base["Classe"]) else 0
-progress_MAP=base["Classe"].value_counts()["MAP"]/etudiant["Classe"].value_counts()["MAP"] if "MAP" in list(base["Classe"]) else 0
+progress_MAP1=base["Classe"].value_counts()["MAP1"]/etudiant["Classe"].value_counts()["MAP1"] if "MAP1" in list(base["Classe"]) else 0
+progress_MAP2=base["Classe"].value_counts()["MAP2"]/etudiant["Classe"].value_counts()["MAP2"] if "MAP2" in list(base["Classe"]) else 0
+progress_MDSMS2=base["Classe"].value_counts()["MDSMS2"]/etudiant["Classe"].value_counts()["MDSMS2"] if "MDSMS2" in list(base["Classe"]) else 0
 
-all=[progress_LGTSD,progress_MDSMS,progress_L2BD,progress_M2SA,progress_MAP]
+all=[progress_LGTSD,progress_MDSMS1,progress_MDSMS2,progress_L2BD,progress_M2SA,progress_MAP1,progress_MAP2]
 global_progress=np.mean(all)
 
 
@@ -236,7 +238,7 @@ with progrss[0]:
     make_progress_char(global_progress,couleur="#BB4415",titre="Progression globale de l'évaluation")
 
 with progrss[1]:
-    make_multi_progress_bar(["LGTSD","MDSMS","L2BD","M2SA","MAP"],all,titre="Progression par classe",colors=["#0F7024","#0C1A94","#066D28","#076D6D","#460E7A"])
+    make_multi_progress_bar(["LGTSD","MDSMS1","MDSMS2","L2BD","M2SA","MAP1","MAP2"],all,titre="Progression par classe",colors=["#0F7024","#0C1A94","#066D28","#076D6D","#460E7A","#00FFFF","#00FF48"],height=500)
 
 if evaluation.shape[0] == 0:
     st.markdown("### Aucune évaluation n'a été soumise par les étudiants pour le moment.")

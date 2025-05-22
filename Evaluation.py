@@ -183,7 +183,6 @@ if  matricule!="":
     pre_nom=dico_etudiant[int(matricule)][0] if int(matricule) in dico_etudiant  else ""
 else:
     pre_nom=""
-#st.write(pre_nom)
 nom_etudiant = st.text_input("Nom", value=pre_nom)
 prenom_etudiant = st.text_input("Prénom")
 sexe = st.radio("Sexe", ["", "Masculin", "Féminin"], index=0)
