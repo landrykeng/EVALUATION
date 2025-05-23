@@ -214,7 +214,7 @@ else:
                     Q_12=st.radio("UTILISATION DES OUTILS ET MATERIELS DIDACTIQUES", ["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=0,key=classe_selectionnee+enseignant+cours+"_12")
                     Q_13=st.radio("DISPONIBILITE A ECOUTER LES ETUDIANTS", ["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=0,key=classe_selectionnee+enseignant+cours+"_13")
                     Q_14=st.radio("MAITRISE DE LA SALLE DE COURS", ["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=0,key=classe_selectionnee+enseignant+cours+"_14")
-                    Q_15=st.radio("INTERACTION ENSEIGNANTS-ETUDIANTS (QUESTIONS-REPONSES)",["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=1,key=classe_selectionnee+enseignant+cours+"_15")
+                    Q_15=st.radio("INTERACTION ENSEIGNANTS-ETUDIANTS (QUESTIONS-REPONSES)",["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=0,key=classe_selectionnee+enseignant+cours+"_15")
                     Q_16=st.radio("INTEGRATION DES TICS DANS LES COURS (VIDEO PROJECTEUR, INTERNET OU COURS SAISIS)",["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=0,key=classe_selectionnee+enseignant+cours+"_16")
                     Q_17=st.radio("ORGANISATION ET SUIVI DES TP, TPE ET TD",["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=0,key=classe_selectionnee+enseignant+cours+"_17")
                     Q_18=st.radio("CAPACITE DE TRANSMISSION DU COURS",["","Très satisfait", "Satisfait", "Moyen", "Mauvais"],index=0,key=classe_selectionnee+enseignant+cours+"_18")
