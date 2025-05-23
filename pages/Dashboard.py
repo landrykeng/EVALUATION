@@ -218,6 +218,8 @@ etudiant=pd.read_excel("Base.xlsx", sheet_name="Liste")
 base=pd.read_excel("Base.xlsx", sheet_name="Etudiant")
 evaluation=pd.read_excel("Base.xlsx", sheet_name="Evaluation")
 
+base
+evaluation
 
 rep_etudiant=pd.DataFrame(etudiant["Classe"].value_counts())
 
