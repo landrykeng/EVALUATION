@@ -9,6 +9,7 @@ import gspread
 from gspread_dataframe import set_with_dataframe, get_as_dataframe
 from oauth2client.service_account import ServiceAccountCredentials
 import sqlite3
+from sqlalchemy import create_engine, text
 
 
 
@@ -157,15 +158,15 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-db_file = "etablissement.db"
+DATABASE_URL ="postgresql://postgres:[ProjetEvaluation]@db.kduqsqcmcdsxmdjwxtfy.supabase.co:5432/postgres"
+engine = create_engine(DATABASE_URL)
+
 @st.cache_data
 def load_data():
-    # Load data from the SQLite database
-    conn = sqlite3.connect(db_file)
-
-    student_eval = pd.read_sql_query("SELECT * FROM etudiant", conn)
-    data_eval = pd.read_sql_query("SELECT * FROM evaluation", conn)
-    conn.close()
+    with engine.connect() as conn:
+        student_eval = pd.read_sql("SELECT * FROM etudiant", conn)
+        data_eval = pd.read_sql("SELECT * FROM evaluation", conn)
+        conn.close()
     liste_etudiant=pd.read_excel('Base.xlsx', sheet_name="Liste")
     data=pd.read_excel('Base.xlsx', sheet_name="Classification")
     return student_eval, data_eval, liste_etudiant, data
@@ -300,17 +301,16 @@ else:
 
                 if len(missing_responses)==0:
                     # Load the SQLite database
-                    conn = sqlite3.connect(db_file)
-                    # Insertion dans la table "etudiant"
-                    etudiant_df.to_sql("etudiant", conn, if_exists="append", index=False)
+                                        # Insertion dans la table "etudiant"
+                    etudiant_df.to_sql("etudiant", engine, if_exists="append", index=False)
 
                     # Insertion dans la table "evaluation"
-                    evaluation_df.to_sql("evaluation", conn, if_exists="append", index=False)
-                    
+                    evaluation_df.to_sql("evaluation", engine, if_exists="append", index=False)
                     st.success(f"✅✅Merci {pre_nom}, votre évaluation a été soumise avec succès.")
-                    student_eval = pd.read_sql_query("SELECT * FROM etudiant", conn)
-                    data_eval = pd.read_sql_query("SELECT * FROM evaluation", conn)
-                    conn.close()
+                    with engine.connect() as conn:
+                        student_eval = pd.read_sql("SELECT * FROM etudiant", conn)
+                        data_eval = pd.read_sql("SELECT * FROM evaluation", conn)
+                        conn.close()
                 else:
                     st.error("❌❌ Evaluation non valide pour la(es) raison(s) suivante(s):")
                     for message in missing_responses:
