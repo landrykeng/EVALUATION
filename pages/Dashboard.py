@@ -14,7 +14,7 @@ import hashlib
 import json
 import os
 from datetime import datetime, timedelta
-import sqlite3
+from sqlalchemy import create_engine, text
 
 st.markdown("""
         <style>
@@ -214,13 +214,15 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+DATABASE_URL ="postgresql://postgres:[ProjetEvaluation]@db.kduqsqcmcdsxmdjwxtfy.supabase.co:5432/postgres"
+engine = create_engine(DATABASE_URL)
 
 etudiant=pd.read_excel("Base.xlsx", sheet_name="Liste")
 
-conn= sqlite3.connect(db_file)
-base=pd.read_sql_query("SELECT * FROM etudiant", conn)
-evaluation=pd.read_sql_query("SELECT * FROM evaluation", conn)
-conn.close()
+with engine.connect() as conn:
+        base = pd.read_sql("SELECT * FROM etudiant", conn)
+        evaluation = pd.read_sql("SELECT * FROM evaluation", conn)
+        conn.close()
 rep_etudiant=pd.DataFrame(etudiant["Classe"].value_counts())
 
 progress_LGTSD=base["Classe"].value_counts()["LGTSD"]/etudiant["Classe"].value_counts()["LGTSD"] if "LGTSD" in list(base["Classe"]) else 0
