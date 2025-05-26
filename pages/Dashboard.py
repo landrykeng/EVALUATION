@@ -8,12 +8,13 @@ import plotly.graph_objects as go
 from my_fonction import *
 from Fonction import *
 from streamlit_echarts import st_echarts
-from Evaluation import  data_eval, student_eval
+from Evaluation import  data_eval, student_eval,db_file
 import io
 import hashlib
 import json
 import os
 from datetime import datetime, timedelta
+import sqlite3
 
 st.markdown("""
         <style>
@@ -215,9 +216,11 @@ st.markdown(
 
 
 etudiant=pd.read_excel("Base.xlsx", sheet_name="Liste")
-base=pd.read_excel("Base.xlsx", sheet_name="Etudiant")
-evaluation=pd.read_excel("Base.xlsx", sheet_name="Evaluation")
 
+conn= sqlite3.connect(db_file)
+base=pd.read_sql_query("SELECT * FROM etudiant", conn)
+evaluation=pd.read_sql_query("SELECT * FROM evaluation", conn)
+conn.close()
 rep_etudiant=pd.DataFrame(etudiant["Classe"].value_counts())
 
 progress_LGTSD=base["Classe"].value_counts()["LGTSD"]/etudiant["Classe"].value_counts()["LGTSD"] if "LGTSD" in list(base["Classe"]) else 0
