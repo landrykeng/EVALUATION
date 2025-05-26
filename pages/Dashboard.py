@@ -224,10 +224,10 @@ conn.close()
 rep_etudiant=pd.DataFrame(etudiant["Classe"].value_counts())
 
 progress_LGTSD=base["Classe"].value_counts()["LGTSD"]/etudiant["Classe"].value_counts()["LGTSD"] if "LGTSD" in list(base["Classe"]) else 0
-progress_MDSMS1=base["Classe"].value_counts()["MDSMS1"]/etudiant["Classe"].value_counts()["MDSMS1"] if "MDSMS1" in list(base["Classe"]) else 0
+progress_MDSMS1=base["Classe"].value_counts()["MDSMS1"]/etudiant["Classe"].value_counts()["MDSMS"] if "MDSMS1" in list(base["Classe"]) else 0
 progress_L2BD=base["Classe"].value_counts()["L2BD"]/etudiant["Classe"].value_counts()["L2BD"] if "L2BD" in list(base["Classe"]) else 0
 progress_M2SA=base["Classe"].value_counts()["M2SA"]/etudiant["Classe"].value_counts()["M2SA"] if "MSA" in list(base["Classe"]) else 0
-progress_MAP1=base["Classe"].value_counts()["MAP1"]/etudiant["Classe"].value_counts()["MAP1"] if "MAP1" in list(base["Classe"]) else 0
+progress_MAP1=base["Classe"].value_counts()["MAP1"]/etudiant["Classe"].value_counts()["MAP"] if "MAP1" in list(base["Classe"]) else 0
 progress_MAP2=base["Classe"].value_counts()["MAP2"]/etudiant["Classe"].value_counts()["MAP2"] if "MAP2" in list(base["Classe"]) else 0
 progress_MDSMS2=base["Classe"].value_counts()["MDSMS2"]/etudiant["Classe"].value_counts()["MDSMS2"] if "MDSMS2" in list(base["Classe"]) else 0
 
