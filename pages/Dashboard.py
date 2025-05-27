@@ -8,7 +8,7 @@ import plotly.graph_objects as go
 from my_fonction import *
 from Fonction import *
 from streamlit_echarts import st_echarts
-from Evaluation import  data_eval, student_eval,db_file
+from Evaluation import  data_eval, student_eval
 import io
 import hashlib
 import json
@@ -214,15 +214,16 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-DATABASE_URL ="postgresql://postgres:[ProjetEvaluation]@db.kduqsqcmcdsxmdjwxtfy.supabase.co:5432/postgres"
+DATABASE_URL ="postgresql://postgres:ProjetEvaluation@db.kduqsqcmcdsxmdjwxtfy.supabase.co:5432/postgres"
 engine = create_engine(DATABASE_URL)
 
 etudiant=pd.read_excel("Base.xlsx", sheet_name="Liste")
 
-with engine.connect() as conn:
-        base = pd.read_sql("SELECT * FROM etudiant", conn)
-        evaluation = pd.read_sql("SELECT * FROM evaluation", conn)
-        conn.close()
+
+base = student_eval.copy()
+evaluation = data_eval.copy()
+        
+        
 rep_etudiant=pd.DataFrame(etudiant["Classe"].value_counts())
 
 progress_LGTSD=base["Classe"].value_counts()["LGTSD"]/etudiant["Classe"].value_counts()["LGTSD"] if "LGTSD" in list(base["Classe"]) else 0

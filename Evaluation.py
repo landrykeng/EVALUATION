@@ -6,11 +6,12 @@ import seaborn as sns
 import plotly.express as px
 import plotly.graph_objects as go
 import gspread
+import time
 from gspread_dataframe import set_with_dataframe, get_as_dataframe
 from oauth2client.service_account import ServiceAccountCredentials
-import sqlite3
 from sqlalchemy import create_engine, text
-
+import supabase 
+from supabase import create_client, Client
 
 
 st.set_page_config(page_title="FORMULAIRE EVALUATION DES ENSEIGNANT", page_icon="📊", layout="wide")
@@ -158,20 +159,62 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-DATABASE_URL ="postgresql://postgres:[ProjetEvaluation]@db.kduqsqcmcdsxmdjwxtfy.supabase.co:5432/postgres"
-engine = create_engine(DATABASE_URL)
 
+url="https://kduqsqcmcdsxmdjwxtfy.supabase.co"
+cle="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtkdXFzcWNtY2RzeG1kand4dGZ5Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0ODI0OTAxOSwiZXhwIjoyMDYzODI1MDE5fQ.cQbybIOXREA67OsSr3h1bgdqzy3atk3CP7VYaMgVIXA"
+supabase = create_client(url, cle)
 @st.cache_data
 def load_data():
-    with engine.connect() as conn:
-        student_eval = pd.read_sql("SELECT * FROM etudiant", conn)
-        data_eval = pd.read_sql("SELECT * FROM evaluation", conn)
-        conn.close()
-    liste_etudiant=pd.read_excel('Base.xlsx', sheet_name="Liste")
-    data=pd.read_excel('Base.xlsx', sheet_name="Classification")
-    return student_eval, data_eval, liste_etudiant, data
-# Load the data
-student_eval, data_eval, liste_etudiant, data = load_data()
+    try:
+        # Délai initial pour permettre l'établissement de la connexion
+        time.sleep(0.5)
+        
+        # Chargement des données étudiants avec délai
+        with st.spinner("Chargement des données étudiants..."):
+            student_eval = supabase.table("etudiant").select("*").execute()
+            time.sleep(0.3)  # Petit délai entre les requêtes
+        
+        # Chargement des données évaluations avec délai
+        with st.spinner("Chargement des données évaluations..."):
+            data_eval = supabase.table("evaluation").select("*").execute()
+            time.sleep(0.2)
+        
+        # Conversion en DataFrame
+        student_eval = pd.DataFrame(student_eval.data)
+        data_eval = pd.DataFrame(data_eval.data)
+        
+        return student_eval, data_eval
+        
+    except Exception as e:
+        st.error(f"Erreur de connexion: {e}")
+        st.info("Veuillez vérifier votre connexion internet et vos identifiants Supabase")
+        
+        # Tentative de reconnexion après délai
+        st.info("Tentative de reconnexion dans 2 secondes...")
+        time.sleep(2)
+        
+        try:
+            # Deuxième tentative
+            with st.spinner("Nouvelle tentative de connexion..."):
+                student_eval = supabase.table("etudiant").select("*").execute()
+                time.sleep(0.5)
+                data_eval = supabase.table("evaluation").select("*").execute()
+                
+                student_eval = pd.DataFrame(student_eval.data)
+                data_eval = pd.DataFrame(data_eval.data)
+                
+                st.success("Connexion rétablie avec succès!")
+                return student_eval, data_eval
+                
+        except Exception as e2:
+            st.error(f"Échec de la reconnexion: {e2}")
+            return None, None
+
+#======================================
+student_eval, data_eval = load_data()
+liste_etudiant=pd.read_excel("Base.xlsx", sheet_name="Liste")
+data=pd.read_excel('Base.xlsx',sheet_name="Classification")
+#======================================
 
 dico_etudiant=liste_etudiant.set_index('Matricule').T.to_dict('list')
 
@@ -265,13 +308,13 @@ else:
             if soumission:
     
                 etudiant_data = {
-                    "Classe": [classe_selectionnee],
-                    "Nom": [nom_etudiant],
-                    "Prénom": [prenom_etudiant],
-                    "Sexe": [sexe],
-                    "Matricule": [matricule]
+                    "Classe": classe_selectionnee,
+                    "Nom": nom_etudiant,
+                    "Prénom": prenom_etudiant,
+                    "Sexe": sexe,
+                    "Matricule": matricule
                 }
-                etudiant_df = pd.DataFrame(etudiant_data)
+                #etudiant_df = pd.DataFrame(etudiant_data)
 
                 # Collecting evaluation data
                 evaluation_data = []
@@ -301,16 +344,19 @@ else:
 
                 if len(missing_responses)==0:
                     # Load the SQLite database
-                                        # Insertion dans la table "etudiant"
-                    etudiant_df.to_sql("etudiant", engine, if_exists="append", index=False)
+                    # Insertion dans la table "etudiant"
+                    rep =supabase.table("etudiant").insert(etudiant_data).execute()
 
                     # Insertion dans la table "evaluation"
-                    evaluation_df.to_sql("evaluation", engine, if_exists="append", index=False)
+                    rep2 = supabase.table("evaluation").insert(evaluation_data).execute()
                     st.success(f"✅✅Merci {pre_nom}, votre évaluation a été soumise avec succès.")
-                    with engine.connect() as conn:
-                        student_eval = pd.read_sql("SELECT * FROM etudiant", conn)
-                        data_eval = pd.read_sql("SELECT * FROM evaluation", conn)
-                        conn.close()
+                    
+                    student_eval = supabase.table("etudiant").select("*").execute()
+                    data_eval = supabase.table("evaluation").select("*").execute()
+                    # Convert the results to DataFrames
+                    student_eval = pd.DataFrame(student_eval.data)
+                    data_eval = pd.DataFrame(data_eval.data)
+
                 else:
                     st.error("❌❌ Evaluation non valide pour la(es) raison(s) suivante(s):")
                     for message in missing_responses:
