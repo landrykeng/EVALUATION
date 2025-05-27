@@ -6,7 +6,6 @@ import seaborn as sns
 import plotly.express as px
 import plotly.graph_objects as go
 import time
-from oauth2client.service_account import ServiceAccountCredentials
 import supabase 
 from supabase import create_client, Client
 
