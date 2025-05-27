@@ -159,7 +159,7 @@ st.markdown(
 url="https://kduqsqcmcdsxmdjwxtfy.supabase.co"
 cle="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtkdXFzcWNtY2RzeG1kand4dGZ5Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0ODI0OTAxOSwiZXhwIjoyMDYzODI1MDE5fQ.cQbybIOXREA67OsSr3h1bgdqzy3atk3CP7VYaMgVIXA"
 supabase = create_client(url, cle)
-@st.cache_data
+#@st.cache_data
 def load_data():
     try:
         # Délai initial pour permettre l'établissement de la connexion
