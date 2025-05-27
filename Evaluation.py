@@ -5,11 +5,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.express as px
 import plotly.graph_objects as go
-import gspread
 import time
 from gspread_dataframe import set_with_dataframe, get_as_dataframe
 from oauth2client.service_account import ServiceAccountCredentials
-from sqlalchemy import create_engine, text
 import supabase 
 from supabase import create_client, Client
 
@@ -343,7 +341,6 @@ else:
 
 
                 if len(missing_responses)==0:
-                    # Load the SQLite database
                     # Insertion dans la table "etudiant"
                     rep =supabase.table("etudiant").insert(etudiant_data).execute()
 
