@@ -14,7 +14,6 @@ import hashlib
 import json
 import os
 from datetime import datetime, timedelta
-from sqlalchemy import create_engine, text
 
 st.markdown("""
         <style>
@@ -214,8 +213,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-DATABASE_URL ="postgresql://postgres:ProjetEvaluation@db.kduqsqcmcdsxmdjwxtfy.supabase.co:5432/postgres"
-engine = create_engine(DATABASE_URL)
 
 etudiant=pd.read_excel("Base.xlsx", sheet_name="Liste")
 
