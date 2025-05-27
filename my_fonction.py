@@ -24,10 +24,6 @@ from branca.colormap import linear
 from streamlit_folium import folium_static
 import datetime
 from datetime import datetime, timedelta
-from st_aggrid.grid_options_builder import GridOptionsBuilder
-from deep_translator import GoogleTranslator
-from requests.exceptions import ConnectionError, Timeout
-from st_aggrid import AgGrid
 from streamlit_echarts import st_echarts
 import base64
 import hashlib
@@ -210,34 +206,8 @@ def class_age(age):
 
 #2. Fonction de tranduction 
 
-# Créer des traducteurs à l'avance pour les langues fréquemment utilisées
-traducteur_en = GoogleTranslator(source='auto', target='en')
-traducteur_fr = GoogleTranslator(source='auto', target='fr')
 
-def traduire_texte(texte, langue='English'):
-    """
-    Traduit le texte donné vers la langue cible en utilisant Google Translate.
 
-    :param texte: Le texte à traduire.
-    :param langue: La langue cible pour la traduction (par défaut 'English').
-    :return: Le texte traduit.
-    """
-    if langue == "" or not texte:
-        return texte
-    
-    try:
-        # Utiliser le traducteur préinitialisé approprié
-        if langue == "Français":
-            traduction = traducteur_fr.translate(texte)
-        else:  # Par défaut, traduire vers l'anglais
-            traduction = traducteur_en.translate(texte)
-            
-        return traduction
-        
-    except Exception as e:
-        # print(f"Erreur lors de la traduction: {e}")
-        return texte  # En cas d'erreur, retourner le texte original
-    
 #3. Fonction d'affichage des métriques version 1
 def display_single_metric_advanced(label, value, delta, unit="", caption="", color_scheme="blue"):
     """Affiche une seule métrique avec un style avancé et personnalisable."""
@@ -2544,18 +2514,6 @@ def calculate_zoom(lon_diff, lat_diff, map_width=800, map_height=600):
                 if zoom_level >= max_zoom:
                     break
             return min(zoom_level, max_zoom)
-
-#31. Fonction de téléchargement de rapport
-def telecharger_pdf(file_path, lang="Français"):
-    with open(file_path, "rb") as f:
-        pdf_bytes = f.read()
-    
-    st.download_button(
-        label=traduire_texte("📥 Télécharger le rapport PDF",lang),
-        data=pdf_bytes,
-        file_name="Rapport_TDB.pdf",
-        mime="application/pdf",
-    )
 #==========================================================
 
 def make_blood_group(df, var):
