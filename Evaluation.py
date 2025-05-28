@@ -334,16 +334,18 @@ else:
                                 )
                         evaluation_data.append(responses)
 
-                evaluation_df = pd.DataFrame(evaluation_data)
+                #evaluation_df = pd.DataFrame(evaluation_data)
 
 
 
                 if len(missing_responses)==0:
-                    # Insertion dans la table "etudiant"
-                    rep =supabase.table("etudiant").insert(etudiant_data).execute()
+                    
 
                     # Insertion dans la table "evaluation"
                     rep2 = supabase.table("evaluation").insert(evaluation_data).execute()
+                    
+                    # Insertion dans la table "etudiant"
+                    rep =supabase.table("etudiant").insert(etudiant_data).execute()
                     st.success(f"✅✅Merci {pre_nom}, votre évaluation a été soumise avec succès.")
                     
                     student_eval = supabase.table("etudiant").select("*").execute()
