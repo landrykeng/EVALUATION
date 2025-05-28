@@ -388,7 +388,7 @@ make_heatmap_echart(choosed_counts, title="Taux de satisfaction (%)", x_label_ro
 
 # Filtrer la base student_eval par classe
 
-st.markdown("# MANIPULATION ET EXPORTATION DES TABLEAU DE DONNES")
+st.markdown("# MANIPULATION ET EXPORTATION DES TABLEAUX DE DONNES")
 st.markdown("### 1. Table des étudiants ayant déjà évaluer les enseignants")
 cb=st.columns([2.5,7.5])
 
