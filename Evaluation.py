@@ -319,8 +319,8 @@ else:
                 
                 if classe_selectionnee != "":
                     for enseignant, cours in nested_dict[classe_selectionnee].items():
+                         p=p + 1
                         responses = {
-                            p=p + 1
                             "id": p,
                             "Classe": classe_selectionnee,
                             "Sexe": sexe,
