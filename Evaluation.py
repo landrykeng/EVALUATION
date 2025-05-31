@@ -10,7 +10,7 @@ import supabase
 from supabase import create_client, Client
 
 
-st.set_page_config(page_title="FORMULAIRE EVALUATION DES ENSEIGNANT", page_icon="📊", layout="wide")
+st.set_page_config(page_title="FORMULAIRE EVALUATION DES ENSEIGNANTS", page_icon="📊", layout="wide")
 
 # Create a custom container with fancy styling for the title
 head=st.columns([4,30,4])
