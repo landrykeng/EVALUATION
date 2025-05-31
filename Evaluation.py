@@ -208,6 +208,7 @@ def load_data():
 
 #======================================
 student_eval, data_eval = load_data()
+p=data_eval["id"].max()
 liste_etudiant=pd.read_excel("Base.xlsx", sheet_name="Liste")
 data=pd.read_excel('Base.xlsx',sheet_name="Classification")
 #======================================
@@ -319,6 +320,8 @@ else:
                 if classe_selectionnee != "":
                     for enseignant, cours in nested_dict[classe_selectionnee].items():
                         responses = {
+                            p=p + 1
+                            "id": p,
                             "Classe": classe_selectionnee,
                             "Sexe": sexe,
                             "Enseignant": enseignant,
