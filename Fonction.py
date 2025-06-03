@@ -377,9 +377,9 @@ def make_donut_chart(data, title="", colors=None, height="400px", cle="donut"):
                 st_echarts(options=options, height=height, key=cle)
 
 
-def generate_word_cloud(df, column_name, max_words=100, min_frequency=1, 
-                        width=800, height=500, title="Nuage de mots", 
-                        color_range=None, random_seed=None):
+def generate_word_cloud(df, column_name, max_words=100, min_frequency=3, 
+                        width=550, height=500, title="Nuage de mots", 
+                        color_range=['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b'], random_seed=None):
     """
     Génère un nuage de mots interactif à partir d'une colonne de texte d'un DataFrame
     
@@ -476,12 +476,12 @@ def generate_word_cloud(df, column_name, max_words=100, min_frequency=1,
         "tooltip": {},
         "series": [{
             "type": "wordCloud",
-            "shape": "circle",
-            "left": "center",
-            "top": "center",
-            "width": "90%",
-            "height": "90%",
-            "right": None,
+            "shape": "square",
+            #"left": "left",
+            "top": "center", 
+            "width": "100%",
+            "height": "100%",
+            #"right": None,
             "bottom": None,
             "sizeRange": [12, 60],
             "rotationRange": [-90, 90],
